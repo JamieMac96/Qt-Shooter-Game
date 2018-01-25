@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QGraphicsItem>
-#include <QGraphicsRectItem>
+#include "avatar.h"
+#include "stdio.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
@@ -12,10 +13,14 @@ int main(int argc, char *argv[])
 
     QGraphicsScene *scene = new QGraphicsScene();
 
-    QGraphicsRectItem *rect = new QGraphicsRectItem();
-    rect->setRect(0, 0, 100, 100);
+    Avatar *avatar = new Avatar();
+    avatar->setRect(0, 0, 100, 100);
 
-    scene->addItem(rect);
+    scene->addItem(avatar);
+
+    avatar->setFlag(QGraphicsItem::ItemIsFocusable);
+    avatar->setFocus();
+
 
     QGraphicsView *view = new QGraphicsView(scene);
     view->show();
