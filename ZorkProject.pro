@@ -1,6 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2018-01-25T18:19:31
 #
 #-------------------------------------------------
 
@@ -24,10 +21,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-    avatar.cpp
+    ./main.cpp \
+    ./mobileobject.cpp \
+    ./avatar.cpp \
+    zork.cpp
 
 HEADERS += \
-    avatar.h
+    ./avatar.h \
+    ./mobileobject.h \
+    zork.h
 
-FORMS +=
+SUBDIRS += \
+
+RESOURCES += \
+    res.qrc
