@@ -18,7 +18,7 @@ void Zork::run()
     // Likely due to a change in focus due to the click.
     // Needs to be fixed at some point
 
-    const double FRAME_RATE = 25;
+    const double FRAME_RATE = 30;
     const double FRAME_TIME = (1 / FRAME_RATE) * 1000;
 
     QGraphicsScene *scene = new QGraphicsScene();

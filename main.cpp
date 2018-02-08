@@ -4,8 +4,8 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication *a = new QApplication(argc, argv);
 
-    Zork zork(&a);
+    Zork zork(a);
     zork.run();
 }
