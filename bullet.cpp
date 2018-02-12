@@ -18,7 +18,7 @@ Bullet::Bullet(MobileObject *parent): QObject(),  MobileObject(940, 500){
     connect(timer,SIGNAL(timeout()),this,SLOT(move()));
 
     // start the timer
-    timer->start(50);
+    timer->start(10);
 }
 
 

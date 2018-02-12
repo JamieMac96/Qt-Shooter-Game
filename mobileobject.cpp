@@ -6,7 +6,7 @@
 using namespace std;
 
 
-MobileObject::MobileObject(int maxX, int maxY) : AnimatedObject(":/images/cowboy.png", 120, 130){
+MobileObject::MobileObject(int maxX, int maxY) : AnimatedObject(":/images/cowboy.png", 129, 129){
     this->movingUp = false;
     this->movingDown = false;
     this->movingRight = false;
@@ -14,7 +14,7 @@ MobileObject::MobileObject(int maxX, int maxY) : AnimatedObject(":/images/cowboy
     this->shooting = false;
     this->maxX = maxX;
     this->maxY = maxY;
-    this->spriteSpacingHorizontal = 129;
+    this->spriteSpacingHorizontal = 128;
     this->spriteSpacingVertical = 129;
     this->movementCounter = 0;
     this->spriteCounter = 0;
@@ -42,11 +42,12 @@ void MobileObject::move(){
 void MobileObject::updatePixmap(){
     int spriteSelected;
 
-//    if(shooting){
-//        spriteSelected = 11;
-//    }
+    if(shooting){
+        spriteSelected = 11;
+        this->setPixmap(spriteList.at(currentDirection).at(spriteSelected));
+    }
 
-    if(movementCounter % 3 == 0){
+    else if(movementCounter % 3 == 0){
 
         bool moving = movingRight || movingLeft || movingUp || movingDown;
 

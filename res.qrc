@@ -4,4 +4,7 @@
         <file>cowboy.png</file>
         <file>bullet.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>wolfsheet1.png</file>
+    </qresource>
 </RCC>

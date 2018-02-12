@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QPixmap>
 #include <QSet>
+#include <QPoint>
 
 class Avatar: public MobileObject{
 public:
@@ -13,7 +14,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void refresh();
-    void generateBulletPlacement();
+    QPoint getGunPosition();
 
 private:
     int maxX;
