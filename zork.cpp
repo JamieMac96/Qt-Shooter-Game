@@ -43,7 +43,7 @@ void Zork::run()
 
         if(timeSinceLastUpdate > FRAME_TIME){
 
-            avatar->move();
+            avatar->refresh();
 
             timeSinceLastUpdate-=FRAME_TIME;
 

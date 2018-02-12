@@ -24,12 +24,16 @@ SOURCES += \
     ./main.cpp \
     ./mobileobject.cpp \
     ./avatar.cpp \
-    zork.cpp
+    zork.cpp \
+    animatedobject.cpp \
+    bullet.cpp
 
 HEADERS += \
     ./avatar.h \
     ./mobileobject.h \
-    zork.h
+    zork.h \
+    animatedobject.h \
+    bullet.h \
 
 SUBDIRS += \
 

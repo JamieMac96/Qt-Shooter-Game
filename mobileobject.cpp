@@ -11,6 +11,7 @@ MobileObject::MobileObject(int maxX, int maxY) : AnimatedObject(":/images/cowboy
     this->movingDown = false;
     this->movingRight = false;
     this->movingLeft = false;
+    this->shooting = false;
     this->maxX = maxX;
     this->maxY = maxY;
     this->spriteSpacingHorizontal = 129;
@@ -23,8 +24,6 @@ MobileObject::MobileObject(int maxX, int maxY) : AnimatedObject(":/images/cowboy
 
 void MobileObject::move(){
     movementCounter++;
-
-    updatePixmap();
 
     if(movingUp){
         this->moveUp();
@@ -41,32 +40,20 @@ void MobileObject::move(){
 }
 
 void MobileObject::updatePixmap(){
-    // 2 --> Down Right
-    // 3 --> Right
-    // 4 --> Up Right
-    // 5 --> Up
-    // 6 --> Up Left
-    // 7 --> Left
-    // 8 --> Down Left
-    // 9 --> Down
+    int spriteSelected;
+
+//    if(shooting){
+//        spriteSelected = 11;
+//    }
 
     if(movementCounter % 3 == 0){
 
-        int spriteSelected;
         bool moving = movingRight || movingLeft || movingUp || movingDown;
 
         if(moving){
             // Sprite in motion
-            spriteSelected = spriteCounter % 9 + 1;
-
-            if(movingRight && movingDown)      currentDirection = 2;
-            else if(movingRight && movingUp)   currentDirection = 4;
-            else if(movingLeft && movingUp)    currentDirection = 6;
-            else if(movingLeft && movingDown)  currentDirection = 8;
-            else if(movingRight)               currentDirection = 3;
-            else if(movingUp)                  currentDirection = 5;
-            else if(movingLeft)                currentDirection = 7;
-            else if(movingDown)                currentDirection = 9;
+            spriteSelected = (spriteCounter % 9) + 1;
+            this->currentDirection = getCurrentDirection();
         }
         else{
             // Sprite standing
@@ -103,7 +90,10 @@ void MobileObject::initializeSpriteVectors(){
     int maxWidth = this->spritesheet->width();
     int maxHeight = this->spritesheet->height();
     int currentWidth = 0;
-    int currentHeight = 0;
+
+    // In this case the first row of sprites that we want is the
+    // second 3rd row
+    int currentHeight = 2 * spriteSpacingVertical;
 
     for(int i = 0; currentHeight < maxHeight; i++){
         vector<QPixmap> currentRow;
@@ -117,5 +107,53 @@ void MobileObject::initializeSpriteVectors(){
         currentRow.clear();
         currentHeight += spriteSpacingVertical;
         currentWidth = 0;
+    }
+}
+
+int MobileObject::getCurrentDirection(){
+    if(movingRight && movingDown)      return 0;
+    else if(movingRight && movingUp)   return 2;
+    else if(movingLeft && movingUp)    return 4;
+    else if(movingLeft && movingDown)  return 6;
+    else if(movingRight)               return 1;
+    else if(movingUp)                  return 3;
+    else if(movingLeft)                return 5;
+    else if(movingDown)                return 7;
+    else return currentDirection;
+}
+
+void MobileObject::setMovementFlags(int direction){
+    movingRight = false;
+    movingLeft = false;
+    movingUp = false;
+    movingDown = false;
+
+    if(direction == 0){
+        movingRight = true;
+        movingDown = true;
+    }
+    else if(direction == 1){
+        movingRight = true;
+    }
+    else if(direction == 2){
+        movingRight = true;
+        movingUp = true;
+    }
+    else if(direction == 3){
+        movingUp = true;
+    }
+    else if(direction == 4){
+        movingLeft = true;
+        movingUp = true;
+    }
+    else if(direction == 5){
+        movingLeft = true;
+    }
+    else if(direction == 6){
+        movingLeft = true;
+        movingDown = true;
+    }
+    else if(direction == 7){
+        movingDown = true;
     }
 }

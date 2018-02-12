@@ -31,6 +31,7 @@ void Avatar::keyPressEvent(QKeyEvent *event){
         this->movingLeft = true;
     }
     if(event->key() == Qt::Key_Space){
+        this->shooting = true;
         Bullet *bullet = new Bullet(this);
         bullet->setPos(x(), y());
         scene()->addItem(bullet);
@@ -51,4 +52,12 @@ void Avatar::keyReleaseEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Left){
         this->movingLeft = false;
     }
+    if(event->key() == Qt::Key_Space){
+        this->shooting = false;
+    }
+}
+
+void Avatar::refresh(){
+    this->move();
+    this->updatePixmap();
 }

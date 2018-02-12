@@ -12,14 +12,14 @@ public:
     Avatar();
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
-
+    void refresh();
+    void generateBulletPlacement();
 
 private:
     int maxX;
     int maxY;
     int height;
     int width;
-    int movementCounter;
 };
 
 #endif // AVATAR_H

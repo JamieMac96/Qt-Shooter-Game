@@ -1,14 +1,15 @@
 #ifndef BULLET_H
 #define BULLET_H
 
+#include "mobileobject.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
 #include <QObject>
 
-class Bullet: public QObject, public QGraphicsPixmapItem{
+class Bullet: public QObject, public MobileObject{
     Q_OBJECT
 public:
-    Bullet(QGraphicsItem *parent=0);
+    Bullet(MobileObject *parent=0);
     virtual ~Bullet(){};
 public slots:
     void move();
