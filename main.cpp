@@ -1,4 +1,4 @@
-#include "zork.h"
+#include "game.h"
 
 /**/
 
@@ -6,6 +6,6 @@ int main(int argc, char *argv[])
 {
     QApplication *a = new QApplication(argc, argv);
 
-    Zork zork(a);
+    Game zork(a);
     zork.run();
 }

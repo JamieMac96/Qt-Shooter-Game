@@ -8,10 +8,12 @@
 
 class Bullet: public QObject, public MobileObject{
     Q_OBJECT
+
 public:
     Bullet(MobileObject *parent=0);
     virtual ~Bullet(){};
-public slots:
+
+private  slots:
     void move();
 };
 

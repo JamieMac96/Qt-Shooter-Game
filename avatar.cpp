@@ -10,14 +10,22 @@
 
 using namespace std;
 
-Avatar::Avatar(): MobileObject(940, 500){
+Avatar::Avatar(): MobileObject(1200, 700, 128, 128){
 
     //TODO: Refactor into logical inheritance hierarchy
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
 
-    width = 120;
-    height = 120;
+    width = 128;
+    height = 128;
+    dead = false;
+    spritesheet.load(":images/cowboy.png");
+
+    sManager = new SpriteManager(spritesheet);
+
+    spritesRequired = getSpriteSheetDescriptors();
+    sManager->initializeSpriteList(spritesRequired);
+
 }
 
 void Avatar::keyPressEvent(QKeyEvent *event){
@@ -62,16 +70,49 @@ void Avatar::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
+void Avatar::updatePixmap(){
+    int spriteSelected;
+
+    if(shooting){
+        spriteSelected = 11;
+        this->setPixmap(sManager->getSprite(currentDirection, spriteSelected));
+    }
+
+    else if(movementCounter % 3 == 0){
+
+        bool moving = movingRight || movingLeft || movingUp || movingDown;
+
+        if(moving){
+            // Sprite in motion
+            spriteSelected = (spriteCounter % 9) + 1;
+            this->currentDirection = getCurrentDirection();
+        }
+        else{
+            // Sprite standing
+            spriteSelected = 0;
+            spriteCounter = 0;
+        }
+
+        this->setPixmap(sManager->getSprite(currentDirection, spriteSelected));
+        spriteCounter++;
+    }
+}
+
 void Avatar::refresh(){
-    this->move();
-    this->updatePixmap();
+    move();
+    updatePixmap();
+}
+
+bool Avatar::isDead()
+{
+    return dead;
 }
 
 // This member function retrieves the position of the gun
 // held by the avatar
 // It is calculated based on the direction that the avatar
-// is facing (note that is only correct for the spritesheet
-// specific being used)
+// is facing (note that it is only correct for the specific
+// spritesheet being used)
 QPoint Avatar::getGunPosition(){
     int x = this->x();
     int y = this->y();
@@ -111,9 +152,28 @@ QPoint Avatar::getGunPosition(){
         break;
     }
 
-    cout << "position " << x << ", " << y << endl;
-    cout << "width" << width << endl;
-    cout << "height" << height << endl;
-
     return QPoint(x, y);
 }
+
+// This method returns a vector of SpriteSheetDescriptors which
+// can then be used by the SpriteManager to correctly read the required
+// sprites.
+// should eventually change this to configuration file that can be read
+// to create SpriteSheetDescriptor objects.
+vector< SpriteSheetDescriptor > Avatar::getSpriteSheetDescriptors(){
+    int currentHeight = 2*height;
+    int numSprites = 14;
+    int maxHeight = spritesheet.height();
+    vector< SpriteSheetDescriptor > descriptors;
+
+    while(currentHeight < maxHeight){
+        QPoint startPoint(0, currentHeight);
+        SpriteSheetDescriptor currentDesc(startPoint, width, height, numSprites);
+
+        descriptors.push_back(currentDesc);
+        currentHeight += height;
+    }
+
+    return descriptors;
+}
+
