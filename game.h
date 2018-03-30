@@ -18,7 +18,7 @@ public:
 private:
     bool won();
     bool lost();
-    vector< Enemy* > generateEnemies(int numEnemies);
+    vector< vector< Enemy* > > generateEnemies(int numEnemies);
     vector< Room* > generateRooms();
 
     QApplication *app;

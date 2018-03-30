@@ -4,6 +4,9 @@
 #include "mobileobject.h"
 #include "spritesheetdescriptor.h"
 #include "spritemanager.h"
+#include "bullet.h"
+#include "collidableobject.h"
+#include "healthbar.h"
 #include <QKeyEvent>
 #include <QPixmap>
 #include <QSet>
@@ -11,14 +14,16 @@
 
 using namespace std;
 
-class Avatar: public MobileObject{
+class Avatar: public MobileObject, public CollidableObject{
 
 public:
     Avatar();
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void refresh();
+    bool handleCollision();
     bool isDead();
+    HealthBar* getHealthBar();
 
 private:
     void updatePixmap();
@@ -27,10 +32,11 @@ private:
 
     int height;
     int width;
-    bool dead;
+    HealthBar* healthBar;
     QImage spritesheet;
-    vector< SpriteSheetDescriptor > spritesRequired;
     SpriteManager *sManager;
+    vector< SpriteSheetDescriptor > spritesRequired;
+    vector< Bullet > activeBullets;
 
 };
 

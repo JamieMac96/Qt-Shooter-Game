@@ -7,7 +7,7 @@ class CollidableObject
 
 public:
     CollidableObject();
-
+    virtual bool handleCollision() = 0;
 };
 
 #endif // COLLIDABLEOBJECT_H

@@ -1,16 +1,11 @@
 #include "enemy.h"
 #include <iostream>
 
-Enemy::Enemy(): MobileObject(1200, 700, 64, 64)
-{
+Enemy::Enemy(): MobileObject(1200, 700, 64, 64){
     spritesheet.load(":/images/wolfsheet1.png");
-
     sManager = new SpriteManager(spritesheet);
-
     spritesRequired = getSpriteSheetDescriptors();
-
     sManager->initializeSpriteList(spritesRequired);
-
     setSpeed(5);
 }
 

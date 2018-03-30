@@ -2,11 +2,13 @@
 #include "stdio.h"
 #include "mobileobject.h"
 #include "bullet.h"
+#include "enemy.h"
 #include <iostream>
 #include <QDebug>
 #include <QPixmap>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <typeinfo>
 
 using namespace std;
 
@@ -15,10 +17,10 @@ Avatar::Avatar(): MobileObject(1200, 700, 128, 128){
     //TODO: Refactor into logical inheritance hierarchy
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
-
+    healthBar = new HealthBar(3);
+    healthBar->setPos(1100, 0);
     width = 128;
     height = 128;
-    dead = false;
     spritesheet.load(":images/cowboy.png");
 
     sManager = new SpriteManager(spritesheet);
@@ -51,8 +53,7 @@ void Avatar::keyPressEvent(QKeyEvent *event){
     }
 }
 
-void Avatar::keyReleaseEvent(QKeyEvent *event)
-{
+void Avatar::keyReleaseEvent(QKeyEvent *event){
     if(event->key() == Qt::Key_Up){
         this->movingUp = false;
     }
@@ -75,10 +76,10 @@ void Avatar::updatePixmap(){
 
     if(shooting){
         spriteSelected = 11;
-        this->setPixmap(sManager->getSprite(currentDirection, spriteSelected));
+        setPixmap(sManager->getSprite(currentDirection, spriteSelected));
     }
 
-    else if(movementCounter % 3 == 0){
+    else if(movementCounter % 4 == 0){
 
         bool moving = movingRight || movingLeft || movingUp || movingDown;
 
@@ -99,13 +100,34 @@ void Avatar::updatePixmap(){
 }
 
 void Avatar::refresh(){
+    handleCollision();
     move();
     updatePixmap();
 }
 
-bool Avatar::isDead()
-{
-    return dead;
+bool Avatar::handleCollision(){
+    if(movementCounter % 10 != 0) return false;
+
+    QList< QGraphicsItem *> colliding_items = collidingItems();
+
+    for(int i = 0; i < colliding_items.size(); i++){
+        if(typeid(*colliding_items[i]) == typeid(Enemy)){
+            // Avatar reacts to damage received
+            setPixmap(sManager->getSprite(currentDirection, 12));
+            (*healthBar)--;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Avatar::isDead(){
+    cout << healthBar->getHealth() << endl;
+    return healthBar->getHealth() <= 0;
+}
+
+HealthBar* Avatar::getHealthBar(){
+    return healthBar;
 }
 
 // This member function retrieves the position of the gun

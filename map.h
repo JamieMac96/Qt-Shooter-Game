@@ -9,18 +9,18 @@ class Map
 {
 
 public:
-    Map(int maxX, int maxY, Avatar* avatar);
+    Map(Avatar* avatar);
     ~Map();
     Room* getRoom(int index);
-    void addRooms(vector< Room* > rooms);
+    void setRooms(vector< Room* > rooms);
     void setCurrentRoomNumber(int number);
+    void setEnemies(vector< vector < Enemy* > >);
     int size();
     void refresh();
 
 private:
     bool isCleared();
     void moveToRoom(Door* doorSelected);
-    QPoint getNewAvatarPosition(QPoint oldPosition);
     vector< Room* > rooms;
     Avatar* avatar;
     int currentRoomNumber;

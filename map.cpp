@@ -1,7 +1,7 @@
 #include "map.h"
 #include <iostream>
 
-Map::Map(int maxX, int maxY, Avatar* avatar)
+Map::Map(Avatar* avatar)
 {
     this->maxX = maxX;
     this->maxY = maxY;
@@ -17,12 +17,23 @@ Room* Map::getRoom(int index){
     return rooms.at(index);
 }
 
-void Map::addRooms(vector<Room *> roomList){
-    rooms.insert(rooms.end(), roomList.begin(), roomList.end());
+void Map::setRooms(vector<Room *> roomList){
+    rooms = roomList;
 }
 
 void Map::setCurrentRoomNumber(int number){
     this->currentRoomNumber = number;
+}
+
+void Map::setEnemies(vector<vector<Enemy *> > enemies)
+{
+    // if enmies.size() == rooms.size() then there
+    //will be a list of enemies for each room
+    int loopCondition = min(enemies.size(), rooms.size());
+
+    for(int i = 0; i < loopCondition; i++){
+        this->rooms.at(i)->setEnemies(enemies.at(i));
+    }
 }
 
 
@@ -41,11 +52,11 @@ void Map::refresh(){
 }
 
 void Map::moveToRoom(Door* doorSelected){
-    rooms.at(this->currentRoomNumber)->removeItemsFromScene();
+    rooms.at(currentRoomNumber)->removeItemsFromScene();
     this->currentRoomNumber = doorSelected->getRoomLink();
     rooms.at(currentRoomNumber)->addItemsToScene();
 
-    QPoint newPos = getNewAvatarPosition(doorSelected->getPosition());
+    QPoint newPos = rooms.at(currentRoomNumber)->getNewAvatarPosition(doorSelected->getPosition());
     avatar->setPos(newPos);
 }
 
@@ -61,39 +72,4 @@ bool Map::isCleared(){
     }
 
     return true;
-}
-
-// Based on the point at which the avatar left the old
-// room we calculate the point they will enter the new room.
-QPoint Map::getNewAvatarPosition(QPoint oldPosition){
-    QPoint newPosition;
-
-    int oldX = oldPosition.x();
-    int oldY = oldPosition.y();
-    int newX = 0;
-    int newY = 0;
-
-    if(oldX == 0){
-        newX = maxX - 100;
-    }
-    else if(oldX == maxX - 50){
-        newX = 100;
-    }
-    else{
-        newX = oldX;
-    }
-    if(oldY == 0){
-        newY = maxY - 250;
-    }
-    else if(oldY == maxY - 150){
-        newY = 120;
-    }
-    else{
-        newY = oldY;
-    }
-
-    newPosition.setX(newX);
-    newPosition.setY(newY);
-
-    return newPosition;
 }

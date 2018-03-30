@@ -11,9 +11,14 @@ class Room
 {
 
 public:
-    Room(int id, QGraphicsScene *scene);
+    Room(int id, QGraphicsScene *scene, int maxX, int maxY);
     ~Room();
     vector< Door* > getDoors();
+    QPoint getRightDoorPosition();
+    QPoint getLeftDoorPosition();
+    QPoint getTopDoorPosition();
+    QPoint getBottomDoorPosition();
+    QPoint getNewAvatarPosition(QPoint oldPosition);
     void addItemsToScene();
     void removeItemsFromScene();
     void addDoor(Door* door);
@@ -26,7 +31,8 @@ private:
     vector< Enemy *> enemies;
     vector< Door* > doors;
     int id;
-
+    int maxX;
+    int maxY;
 };
 
 #endif // ROOM_H
