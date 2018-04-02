@@ -3,66 +3,68 @@
 #include "enemy.h"
 #include "stdio.h"
 #include "healthbar.h"
+#include "gameconstants.h"
 #include <QApplication>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QTime>
+#include <iostream>
+#include <unistd.h>
 
-Game::Game(QApplication *app)
-{
-    this->app   = app;
-    scene       = new QGraphicsScene();
-    avatarPtr   = new Avatar();
-    map         = new Map(avatarPtr);
-    currentRoom = 0;
+using namespace std;
+
+Game::Game(QApplication *app){
+    this->app         = app;
+    this->scenePtr    = new QGraphicsScene();
+    this->avatarPtr   = new Avatar();
+    this->mapPtr      = new Map(avatarPtr);
+    this->currentRoom = 0;
 }
 
-void Game::run()
-{
-    // TODO: The avatar does not work if you click on the screen.
-    // Likely due to a change in focus due to the click.
-    // Needs to be fixed at some point
+void Game::run(){
+    const double frameTime = (1 / frameRate) * 1000;
 
-    scene->setSceneRect(0,0,maxX,maxY);
-    scene->setBackgroundBrush(QBrush(QImage(":images/Game_Background.png")));
+    generateMap();
 
-    map->setRooms(generateRooms());
-    map->setEnemies(generateEnemies(5));
+    scenePtr->setSceneRect(0, 0, maximumX, maximumY);
+    scenePtr->setBackgroundBrush(QBrush(QImage(":images/Game_Background.png")));
+    scenePtr->addItem(avatarPtr);
+    scenePtr->addItem(avatarPtr->getHealthBar());
 
-    map->setCurrentRoomNumber(0);
 
-    map->getRoom(currentRoom)->addItemsToScene();
-    scene->addItem(avatarPtr);
-
-    scene->addItem(avatarPtr->getHealthBar());
-
-    QGraphicsView *view = new QGraphicsView(scene);
+    QGraphicsView *view = new QGraphicsView(scenePtr);
     view->show();
 
     QTime last_update = QTime::currentTime();
 
-    while(!(this->won() || this->lost())){
+    while(!(isOver())){
         app->processEvents();
         QTime currentTime = QTime::currentTime();
         int timeSinceLastUpdate = last_update.msecsTo(currentTime);
 
         if(timeSinceLastUpdate > frameTime){
             avatarPtr->refresh();
-            map->refresh();
+            mapPtr->refresh();
             timeSinceLastUpdate-=frameTime;
             last_update = QTime::currentTime();
 
         }
     }
 
+    sleep(1);
+
+    // MEMOMRY MANAGEMENT
+    mapPtr->~Map();
+    delete scenePtr;
+    delete view;
+
     this->app->exit();
 }
 
-bool Game::won()
-{
-    for(unsigned int i = 0; i < map->size(); i++){
-        if(!map->getRoom(i)->isCleared()){
+bool Game::won() const{
+    for(int i = 0; i < mapPtr->size(); i++){
+        if(!mapPtr->getRoom(i)->isCleared()){
             return false;
         }
     }
@@ -70,57 +72,51 @@ bool Game::won()
     return true;
 }
 
-bool Game::lost()
-{
-    if(avatarPtr->isDead()) return true;
+bool Game::lost() const{
+    return avatarPtr->isDead();
 }
 
-vector<Room *> Game::generateRooms()
-{
-    QImage doorImage;
+bool Game::isOver() const{
+    return won() || lost();
+}
 
+void Game::generateMap(){
+    QImage doorImage;
     doorImage.load(":images/door.png");
     QPixmap doorPixmap = QPixmap::fromImage(doorImage.copy(0, 0, 30, 50));
     QPixmap scaledDoor = doorPixmap.scaled(QSize(90, 150));
 
     vector< Room* > rooms;
 
-    for(int i = 0; i < 5; i++){
-        Room *newRoom = new Room(i, this->scene, maxX, maxY);
+    for(unsigned int i = 0; i < 5; i++){
+        Room *newRoom = new Room(i, this->scenePtr, maximumX, maximumY);
         rooms.push_back(newRoom);
     }
 
-    Door *doorOne = new Door(1, scaledDoor, rooms.at(0)->getLeftDoorPosition());
-    Door *doorTwo = new Door(0, scaledDoor, rooms.at(1)->getRightDoorPosition());
-    Door *doorThree = new Door(2, scaledDoor, rooms.at(1)->getBottomDoorPosition());
-    Door *doorFour = new Door(1, scaledDoor, rooms.at(2)->getTopDoorPosition());
-    Door *doorFive = new Door(3, scaledDoor, rooms.at(2)->getLeftDoorPosition());
-    Door *doorSix = new Door(4, scaledDoor, rooms.at(2)->getBottomDoorPosition());
-    Door *doorSeven = new Door(2, scaledDoor, rooms.at(3)->getRightDoorPosition());
-    Door *doorEight = new Door(2, scaledDoor, rooms.at(4)->getTopDoorPosition());
+    mapPtr->setRooms(rooms);
 
-    rooms.at(0)->addDoor(doorOne);
-    rooms.at(1)->addDoor(doorTwo);
-    rooms.at(1)->addDoor(doorThree);
-    rooms.at(2)->addDoor(doorFour);
-    rooms.at(2)->addDoor(doorFive);
-    rooms.at(2)->addDoor(doorSix);
-    rooms.at(3)->addDoor(doorSeven);
-    rooms.at(4)->addDoor(doorEight);
+    mapPtr->connectRooms(scaledDoor, 0, 1, 3);
+    mapPtr->connectRooms(scaledDoor, 1, 2, 2);
+    mapPtr->connectRooms(scaledDoor, 2, 3, 3);
+    mapPtr->connectRooms(scaledDoor, 2, 4, 2);
 
-    return rooms;
+    vector< vector< Enemy* > > enemies = generateEnemies(5);
+
+    mapPtr->setEnemies(enemies);
+    mapPtr->setCurrentRoomNumber(0);
+    mapPtr->getRoom(currentRoom)->addItemsToScene();
 }
 
 vector< vector<Enemy *> > Game::generateEnemies(int numEnemies){
     vector< vector<Enemy *> > enemies;
 
     // Create enemies
-    for(int i = 0; i < map->size(); i++){
+    for(int i = 0; i < mapPtr->size(); i++){
         vector< Enemy* > subenemies;
         for(int j = 0; j < numEnemies ; j++){
             Enemy *enemy = new Enemy();
-            int x = rand() % maxX;
-            int y = rand() % maxY;
+            int x = rand() % maximumX;
+            int y = rand() % maximumY;
             enemy->setPos(x, y);
             subenemies.push_back(enemy);
         }
@@ -130,5 +126,3 @@ vector< vector<Enemy *> > Game::generateEnemies(int numEnemies){
 
     return enemies;
 }
-
-

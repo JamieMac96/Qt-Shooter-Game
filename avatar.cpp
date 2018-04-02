@@ -1,8 +1,9 @@
 #include "avatar.h"
 #include "stdio.h"
-#include "mobileobject.h"
+#include "mobileitem.h"
 #include "bullet.h"
 #include "enemy.h"
+#include "gameconstants.h"
 #include <iostream>
 #include <QDebug>
 #include <QPixmap>
@@ -12,26 +13,26 @@
 
 using namespace std;
 
-Avatar::Avatar(): MobileObject(1200, 700, 128, 128){
 
-    //TODO: Refactor into logical inheritance hierarchy
+Avatar::Avatar(): MobileItem(maximumX, maximumY, avatarHeight, avatarWidth){
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
+
     healthBar = new HealthBar(3);
-    healthBar->setPos(1100, 0);
-    width = 128;
-    height = 128;
+
     spritesheet.load(":images/cowboy.png");
-
     sManager = new SpriteManager(spritesheet);
-
     spritesRequired = getSpriteSheetDescriptors();
     sManager->initializeSpriteList(spritesRequired);
 
 }
 
-void Avatar::keyPressEvent(QKeyEvent *event){
+Avatar::~Avatar(){
+    delete sManager;
+    delete healthBar;
+}
 
+void Avatar::keyPressEvent(QKeyEvent *event){
     if(event->key() == Qt::Key_Up){
         this->movingUp = true;
     }
@@ -71,6 +72,21 @@ void Avatar::keyReleaseEvent(QKeyEvent *event){
     }
 }
 
+bool Avatar::handleCollision(){
+    if(movementCounter % 10 != 0) return false;
+
+    QList< QGraphicsItem *> colliding_items = collidingItems();
+
+    for(int i = 0; i < colliding_items.size(); i++){
+        if(typeid(*colliding_items[i]) == typeid(Enemy)){
+            // Avatar reacts to damage received
+            setPixmap(sManager->getSprite(currentDirection, 12));
+            (*healthBar)--;
+            return true;
+        }
+    }
+    return false;
+}
 void Avatar::updatePixmap(){
     int spriteSelected;
 
@@ -78,7 +94,6 @@ void Avatar::updatePixmap(){
         spriteSelected = 11;
         setPixmap(sManager->getSprite(currentDirection, spriteSelected));
     }
-
     else if(movementCounter % 4 == 0){
 
         bool moving = movingRight || movingLeft || movingUp || movingDown;
@@ -99,30 +114,15 @@ void Avatar::updatePixmap(){
     }
 }
 
+
 void Avatar::refresh(){
     handleCollision();
     move();
     updatePixmap();
 }
 
-bool Avatar::handleCollision(){
-    if(movementCounter % 10 != 0) return false;
 
-    QList< QGraphicsItem *> colliding_items = collidingItems();
-
-    for(int i = 0; i < colliding_items.size(); i++){
-        if(typeid(*colliding_items[i]) == typeid(Enemy)){
-            // Avatar reacts to damage received
-            setPixmap(sManager->getSprite(currentDirection, 12));
-            (*healthBar)--;
-            return true;
-        }
-    }
-    return false;
-}
-
-bool Avatar::isDead(){
-    cout << healthBar->getHealth() << endl;
+bool Avatar::isDead() const{
     return healthBar->getHealth() <= 0;
 }
 
@@ -135,7 +135,7 @@ HealthBar* Avatar::getHealthBar(){
 // It is calculated based on the direction that the avatar
 // is facing (note that it is only correct for the specific
 // spritesheet being used)
-QPoint Avatar::getGunPosition(){
+QPoint Avatar::getGunPosition() const{
     int x = this->x();
     int y = this->y();
     switch (currentDirection) {
@@ -180,8 +180,6 @@ QPoint Avatar::getGunPosition(){
 // This method returns a vector of SpriteSheetDescriptors which
 // can then be used by the SpriteManager to correctly read the required
 // sprites.
-// should eventually change this to configuration file that can be read
-// to create SpriteSheetDescriptor objects.
 vector< SpriteSheetDescriptor > Avatar::getSpriteSheetDescriptors(){
     int currentHeight = 2*height;
     int numSprites = 14;

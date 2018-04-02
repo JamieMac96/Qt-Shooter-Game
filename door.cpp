@@ -18,11 +18,12 @@ QPoint Door::getPosition() const{
     return position;
 }
 
-bool Door::collisionOccured(){
+bool Door::handleCollision(){
     QList< QGraphicsItem *> colliding_items = collidingItems();
-    for(int i = 0; i < colliding_items.size(); i++){
+    for( int i = 0; i < colliding_items.size(); i++){
         if(typeid(*colliding_items[i]) == typeid(Avatar)){
             return true;
         }
     }
+    return false;
 }

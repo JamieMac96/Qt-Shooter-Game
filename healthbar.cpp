@@ -9,7 +9,7 @@ HealthBar::HealthBar(int initialValue): QGraphicsTextItem(){
     setFont(QFont("times", 16));
 }
 
-int HealthBar::getHealth(){
+int HealthBar::getHealth() const{
     return health;
 }
 

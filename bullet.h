@@ -1,20 +1,25 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include "mobileobject.h"
+#include "mobileitem.h"
+#include "collidableitem.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
 #include <QObject>
 
-class Bullet: public QObject, public MobileObject{
+// INHERITANCE
+class Bullet: public QObject, public MobileItem, public CollidableItem{
     Q_OBJECT
 
 public:
-    Bullet(MobileObject *parent=0);
-    virtual ~Bullet(){};
-
-private  slots:
+    Bullet(MobileItem *parent=0);
+    bool handleCollision();
     void move();
+
+public  slots:
+    void refresh();
+
+private:
 };
 
 #endif // BULLET_H

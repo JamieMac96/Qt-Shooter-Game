@@ -1,11 +1,10 @@
 #ifndef AVATAR_H
 #define AVATAR_H
-
-#include "mobileobject.h"
+// DIRECTIVES
+#include "mobileitem.h"
 #include "spritesheetdescriptor.h"
 #include "spritemanager.h"
-#include "bullet.h"
-#include "collidableobject.h"
+#include "collidableitem.h"
 #include "healthbar.h"
 #include <QKeyEvent>
 #include <QPixmap>
@@ -14,30 +13,29 @@
 
 using namespace std;
 
-class Avatar: public MobileObject, public CollidableObject{
+class Avatar: public MobileItem, public CollidableItem{
 
 public:
+    // PROTOTYPES
     Avatar();
+    ~Avatar();
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
-    void refresh();
     bool handleCollision();
-    bool isDead();
+    bool isDead() const;
+    void refresh();
     HealthBar* getHealthBar();
 
 private:
+    QPoint getGunPosition() const;
     void updatePixmap();
-    QPoint getGunPosition();
     vector< SpriteSheetDescriptor > getSpriteSheetDescriptors();
 
-    int height;
-    int width;
+    // POINTERS
     HealthBar* healthBar;
+    SpriteManager* sManager;
     QImage spritesheet;
-    SpriteManager *sManager;
     vector< SpriteSheetDescriptor > spritesRequired;
-    vector< Bullet > activeBullets;
-
 };
 
 #endif // AVATAR_H

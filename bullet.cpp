@@ -1,5 +1,6 @@
 #include "bullet.h"
 #include "enemy.h"
+#include "gameconstants.h"
 #include <QTimer>
 #include <QGraphicsScene>
 #include <iostream>
@@ -7,8 +8,10 @@
 
 using namespace std;
 
-Bullet::Bullet(MobileObject *parent): QObject(),  MobileObject(1180, 680, 6, 8){
-    this->setPixmap(QPixmap(":images/bullet.png"));
+Bullet::Bullet(MobileItem *parent): QObject(),
+        MobileItem(maximumX - 10, maximumY - 10, 6, 8){
+    setPixmap(QPixmap(":images/bullet.png"));
+    setSpeed(10);
 
     // The bullet will take on the directional properties
     // of the mobileObject that fired it
@@ -17,15 +20,19 @@ Bullet::Bullet(MobileObject *parent): QObject(),  MobileObject(1180, 680, 6, 8){
 
     // make/connect a timer to move() the bullet every so often
     QTimer * timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(move()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(refresh()));
 
     // start the timer.
     timer->start(10);
 }
 
+void Bullet::refresh()
+{
+    if(!handleCollision()) move();
+}
 
-void Bullet::move(){
-
+bool Bullet::handleCollision()
+{
     // Check for collision
     QList< QGraphicsItem *> colliding_items = collidingItems();
     for(int i = 0; i < colliding_items.size(); i++){
@@ -35,12 +42,17 @@ void Bullet::move(){
             scene()->removeItem(enemy);
             scene()->removeItem(this);
             delete this;
-            return;
+            return true;
         }
     }
+    return false;
+}
+
+
+void Bullet::move(){
 
     // If there is no collision we move the bullet
-    MobileObject::move();
+    MobileItem::move();
 
     // if the bullet is off the screen, destroy it
     bool offScreen  = (pos().x() <= 0 || pos().y() <= 0

@@ -2,15 +2,15 @@
 #define DOOR_H
 
 #include <QGraphicsPixmapItem>
+#include "collidableitem.h"
 
-class Door: public QGraphicsPixmapItem
-{
+class Door: public QGraphicsPixmapItem, public CollidableItem{
 
 public:
     Door(int roomLink, QPixmap pixmap, QPoint position);
     int getRoomLink() const;
     QPoint getPosition() const;
-    bool collisionOccured();
+    bool handleCollision();
 
 private:
     int roomLink;

@@ -1,4 +1,4 @@
-#include "mobileobject.h"
+#include "mobileitem.h"
 #include "spritesheetdescriptor.h"
 #include <string>
 #include <iostream>
@@ -6,23 +6,23 @@
 using namespace std;
 
 
-MobileObject::MobileObject(int maxX, int maxY, int height, int width){
-    this->movingUp = false;
-    this->movingDown = false;
-    this->movingRight = false;
-    this->movingLeft = false;
-    this->shooting = false;
-    this->maxX = maxX;
-    this->maxY = maxY;
-    this->height = height;
-    this->width = width;
-    this->movementCounter = 0;
-    this->spriteCounter = 0;
+MobileItem::MobileItem(int maxX, int maxY, int height, int width){
+    this->movingUp         = false;
+    this->movingDown       = false;
+    this->movingRight      = false;
+    this->movingLeft       = false;
+    this->shooting         = false;
+    this->maxX             = maxX;
+    this->maxY             = maxY;
+    this->height           = height;
+    this->width            = width;
+    this->movementCounter  = 0;
+    this->spriteCounter    = 0;
     this->currentDirection = 3;
-    this->speed = 10;
+    this->speed            = 5;
 }
 
-void MobileObject::move(){
+void MobileItem::move(){
     movementCounter++;
 
     if(movingUp){
@@ -39,7 +39,7 @@ void MobileObject::move(){
     }
 }
 
-int MobileObject::getCurrentDirection(){
+int MobileItem::getCurrentDirection(){
     if(movingRight && movingDown)      return 0;
     else if(movingRight && movingUp)   return 2;
     else if(movingLeft && movingUp)    return 4;
@@ -51,7 +51,7 @@ int MobileObject::getCurrentDirection(){
     else return currentDirection;
 }
 
-void MobileObject::setMovementFlags(int direction){
+void MobileItem::setMovementFlags(int direction){
     movingRight = false;
     movingLeft = false;
     movingUp = false;
@@ -87,32 +87,30 @@ void MobileObject::setMovementFlags(int direction){
     }
 }
 
-void MobileObject::setSpeed(int speed){
+void MobileItem::setSpeed(int speed){
     this->speed = speed;
 }
 
-void MobileObject::moveUp(){
+void MobileItem::moveUp(){
     int nextY = ((((this->y() - speed)) < 0) ? 0 : (this->y() - speed));
     this->setPos(this->x(), nextY);
 }
 
-void MobileObject::moveDown(){
+void MobileItem::moveDown(){
     int qualifiedY = this->y() + height;
 
     int nextY = (qualifiedY > maxY) ? this->y(): this->y() + speed;
     this->setPos(this->x(), nextY);
 }
 
-void MobileObject::moveRight(){
+void MobileItem::moveRight(){
     int qualifiedX = this->x() + width;
 
     int nextX = (qualifiedX > maxX) ? this->x() : (this->x() + speed);
     this->setPos(nextX, this->y());
 }
 
-void MobileObject::moveLeft(){
+void MobileItem::moveLeft(){
     int nextX = ((((this->x() - speed)) < 0) ? 0 : (this->x() - speed));
     this->setPos(nextX, this->y());
 }
-
-

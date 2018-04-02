@@ -1,12 +1,12 @@
 #ifndef COLLIDABLEOBJECT_H
 #define COLLIDABLEOBJECT_H
 
-
-class CollidableObject
-{
+// ABSTRACT CLASS
+class CollidableItem{
 
 public:
-    CollidableObject();
+    CollidableItem();
+    // PURE VIRTUAL FUNCTION
     virtual bool handleCollision() = 0;
 };
 

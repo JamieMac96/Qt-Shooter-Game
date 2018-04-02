@@ -17,8 +17,7 @@
  * spritesheetmanager will process this information and read in the
  * currect information.
  */
-class SpriteSheetDescriptor
-{
+class SpriteSheetDescriptor{
 
 public:
     //Constructors
@@ -33,10 +32,10 @@ public:
     void setNumSprites(int numEls);
 
     //Getters
-    QPoint getStartPoint();
-    int getSpriteWidth();
-    int getSpriteHeight();
-    int getNumSprites();
+    QPoint getStartPoint() const;
+    int getSpriteWidth() const;
+    int getSpriteHeight() const;
+    int getNumSprites() const;
 
 private:
     QPoint startPoint;

@@ -1,21 +1,21 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "mobileobject.h"
+#include "mobileitem.h"
 #include "spritesheetdescriptor.h"
 #include "spritemanager.h"
+#include "collidableitem.h"
 
 using namespace std;
 
-class Enemy: public MobileObject
-{
-
+class Enemy: public MobileItem{
 public:
     Enemy();
+    ~Enemy();
     int getCurrentDirection();
-    void refresh();
     bool isDead() const;
     void setDead();
+    void refresh();
     vector <SpriteSheetDescriptor> getSpriteSheetDescriptors();
 
 private:

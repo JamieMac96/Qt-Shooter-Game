@@ -21,16 +21,15 @@ using namespace std;
  * of sprites that are used to animate movement to the right.
  */
 
-class SpriteManager
-{
+class SpriteManager{
 
 public:
     SpriteManager(QImage spritesheet);
     void initializeSpriteList(vector< SpriteSheetDescriptor > descriptors);
-    QPixmap getSprite(int direction, int animation);
+    QPixmap getSprite(int direction, int animation) const;
 
 private:
-    vector< QPixmap > getSpriteSublist(int direction);
+    vector< QPixmap > getSpriteSublist(int direction) const;
 
     QImage spritesheet;
     vector< vector< QPixmap > > spriteList;

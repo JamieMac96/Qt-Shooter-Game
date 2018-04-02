@@ -3,11 +3,11 @@
 
 #include <QGraphicsTextItem>
 
-class HealthBar: public QGraphicsTextItem
-{
+class HealthBar: public QGraphicsTextItem{
 public:
     HealthBar(int initialValue);
-    int getHealth();
+    int getHealth() const;
+    // OPERATOR OVERLOADING
     void operator++(int);
     void operator--(int);
 private:

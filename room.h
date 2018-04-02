@@ -7,28 +7,29 @@
 #define ROOM_H
 
 
-class Room
-{
+class Room{
 
 public:
     Room(int id, QGraphicsScene *scene, int maxX, int maxY);
     ~Room();
-    vector< Door* > getDoors();
-    QPoint getRightDoorPosition();
-    QPoint getLeftDoorPosition();
-    QPoint getTopDoorPosition();
-    QPoint getBottomDoorPosition();
-    QPoint getNewAvatarPosition(QPoint oldPosition);
+    vector< Door* > getDoors() const;
+    QPoint getRightDoorPosition() const;
+    QPoint getLeftDoorPosition() const;
+    QPoint getTopDoorPosition() const;
+    QPoint getBottomDoorPosition() const;
+    QPoint getDoorPosition(int position) const;
+    QPoint getNewAvatarPosition(QPoint oldPosition) const;
+    vector< Enemy* > getEnemies() const;
+    void setEnemies(vector< Enemy* >& enemies);
+    void addDoor(Door* door);
     void addItemsToScene();
     void removeItemsFromScene();
-    void addDoor(Door* door);
-    void setEnemies(vector< Enemy* > enemies);
     void refresh();
     bool isCleared();
 
 private:
     QGraphicsScene *scene;
-    vector< Enemy *> enemies;
+    vector< Enemy* > enemies;
     vector< Door* > doors;
     int id;
     int maxX;

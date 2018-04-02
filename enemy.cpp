@@ -1,12 +1,16 @@
 #include "enemy.h"
+#include "gameconstants.h"
 #include <iostream>
 
-Enemy::Enemy(): MobileObject(1200, 700, 64, 64){
+Enemy::Enemy(): MobileItem(maximumX, maximumY, 64, 64){
     spritesheet.load(":/images/wolfsheet1.png");
     sManager = new SpriteManager(spritesheet);
     spritesRequired = getSpriteSheetDescriptors();
     sManager->initializeSpriteList(spritesRequired);
-    setSpeed(5);
+}
+
+Enemy::~Enemy(){
+    delete sManager;
 }
 
 int Enemy::getCurrentDirection(){
@@ -77,7 +81,7 @@ vector<SpriteSheetDescriptor> Enemy::getSpriteSheetDescriptors(){
     QPoint startPoint;
     SpriteSheetDescriptor desc;
 
-    for(int i = 0; i < 4; i++){
+    for(unsigned int i = 0; i < 4; i++){
         startPoint.setX(startXs[i]);
         startPoint.setY(startYs[i]);
         desc.setStartPoint(startPoint);

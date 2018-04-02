@@ -7,30 +7,24 @@
 #ifndef GAME_H
 #define GAME_H
 
-
-class Game
-{
+class Game{
 
 public:
     Game(QApplication *app);
     void run();
 
 private:
-    bool won();
-    bool lost();
+    bool won() const;
+    bool lost() const;
+    bool isOver() const;
     vector< vector< Enemy* > > generateEnemies(int numEnemies);
-    vector< Room* > generateRooms();
+    void generateMap();
 
     QApplication *app;
-    QGraphicsScene *scene;
-    Map* map;
+    QGraphicsScene *scenePtr;
+    Map* mapPtr;
     Avatar *avatarPtr;
     int currentRoom;
-    const int maxX = 1200;
-    const int maxY = 700;
-    const double frameRate = 30;
-    const double frameTime = (1 / frameRate) * 1000;
-
 };
 
 #endif // GAME_H

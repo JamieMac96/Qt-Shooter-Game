@@ -7,11 +7,10 @@
 
 using namespace std;
 
-class MobileObject: public QGraphicsPixmapItem
-{
+class MobileItem: public QGraphicsPixmapItem{
 
 public:
-    MobileObject(int maxX, int maxY, int height, int width);
+    MobileItem(int maxX, int maxY, int height, int width);
     virtual void move();
     virtual int getCurrentDirection();
     void setMovementFlags(int direction);
